@@ -10,7 +10,7 @@
 function AttributeDeobfuscator() {
     "use strict";
 
-    let valueArr = [];
+    this.attributeArr = [];
     let scriptURLs = [];
     let callback = () => console.log("No callback was set");
     
@@ -67,7 +67,7 @@ function AttributeDeobfuscator() {
     };
 
     this.toObfuscated = (str, returnAsElementArray) => {
-        let result = valueArr.find(val => val.name == str);
+        let result = this.attributeArr.find(val => val.name == str);
         if(typeof result == "object") 
         {
             if(returnAsElementArray)
@@ -82,7 +82,7 @@ function AttributeDeobfuscator() {
     };
 
     this.toNormal = str => {
-        let result = valueArr.find(val => val.randomizedName == str)
+        let result = this.attributeArr.find(val => val.randomizedName == str)
         if(typeof result == "object")
         {
             return result.name;
@@ -132,9 +132,9 @@ function AttributeDeobfuscator() {
                                     "randomizedName": randomizedName
                                     };
 
-                                    if(!valueArr.some(val => val.randomizedName == combinedObj.randomizedName)) //if doesn't already exist
+                                    if(!this.attributeArr.some(val => val.randomizedName == combinedObj.randomizedName)) //if doesn't already exist
                                     {
-                                        valueArr.push(combinedObj); //add the obj to the array
+                                        this.attributeArr.push(combinedObj); //add the obj to the array
                                     }
                                 }
                             }
