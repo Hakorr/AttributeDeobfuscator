@@ -8,15 +8,17 @@
  */
 
 function AttributeDeobfuscator(_callback) {
+    "use strict";
+    
     window.addEventListener("load", () => _callback());
 
-    valueArr = [];
-    scriptURLs = [];
+    let valueArr = [];
+    let scriptURLs = [];
 
-    rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
-    BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
+    const rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
+    const BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
 
-    observerCallback = mutationsList => {
+    const observerCallback = mutationsList => {
         for (let mutationRecord of mutationsList) {
             for (let node of mutationRecord.addedNodes) {
                 if (node.tagName !== 'SCRIPT') continue;
@@ -38,7 +40,7 @@ function AttributeDeobfuscator(_callback) {
         };
     };
 
-    mutObvsr = new MutationObserver(observerCallback);
+    const mutObvsr = new MutationObserver(observerCallback);
     mutObvsr.observe(document, { childList: true, subtree: true });
 
     document.rndName = async (e) => {
@@ -54,7 +56,7 @@ function AttributeDeobfuscator(_callback) {
         }
     }
 
-    get = async url => {
+    const get = async url => {
         let response = await fetch(url);
 
         if (!response.ok) {
@@ -88,7 +90,7 @@ function AttributeDeobfuscator(_callback) {
         }
     };
 
-    handleScript = str => {
+    const handleScript = str => {
         //This could be done with a fancy Regex search, but I don't have a sufficent Regex knowledge to make to fast enough.
 
         if(str.includes("sourceMapping"))
