@@ -7,14 +7,13 @@
  * Apache 2.0 licensed
  */
 
-function AttributeDeobfuscator(_callback) {
+function AttributeDeobfuscator() {
     "use strict";
-    
-    window.addEventListener("load", () => _callback());
 
     let valueArr = [];
     let scriptURLs = [];
-
+    let callback = () => console.log("No callback was set");
+    
     const rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
     const BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
 
@@ -149,4 +148,10 @@ function AttributeDeobfuscator(_callback) {
             });
         }
     }
+
+    window.addEventListener("load", () => callback());
+
+    this.loaded = __callback => {
+        callback = __callback; 
+    };
 }
