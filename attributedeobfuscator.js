@@ -151,7 +151,7 @@ function AttributeDeobfuscator() {
 
     window.addEventListener("load", () => callback());
 
-    this.loaded = __callback => {
+    this.ready = __callback => {
         callback = __callback; 
     };
 }
