@@ -92,3 +92,33 @@ With the unobfuscated className, you can access the element from your script, li
 ```js
 Deobfuscator.toObfuscated("unobfuscatedClassName", true);
 ```
+
+## Example userscripts
+
+Change the background to an image
+```js
+// ==UserScript==
+// @name        name
+// @namespace   namespace
+// @match       https://www.reddit.com/*
+// @grant       none
+// @version     1.0
+// @author      author
+// @run-at      document-start
+// @description description
+// @require     https://raw.githubusercontent.com/Hakorr/AttributeDeobfuscator/main/attributedeobfuscator.js
+// ==/UserScript==
+
+const Deobfuscator = new AttributeDeobfuscator();
+
+const IMAGE_URL = "https://images.pexels.com/photos/853199/pexels-photo-853199.jpeg";
+
+Deobfuscator.ready(() => {
+    const layer = Deobfuscator.toObfuscated("innerContainer", true);
+
+    layer[0].style["background-image"] = `url("${IMAGE_URL}")`;
+    layer[0].style["background-repeat"] = 'no-repeat';
+    layer[0].style["background-attachment"] = 'fixed';
+    layer[0].style["background-positio"] = '0% 50%';
+});
+```
