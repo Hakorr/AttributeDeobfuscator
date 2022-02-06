@@ -2,6 +2,12 @@
 
 An element attribute deobfuscator for [Reddit](https://www.reddit.com). Turn the original attribute names into the obfuscated/randomized ones and vice versa. Eases and allows creating of new Reddit modifying userscripts.
 
+## Todo
+
+* Run the ready function after a URL hash change
+* Allow usage of multiple classNames
+* Speed up the load time
+
 ## Usage
 
 ### As a userscript
