@@ -1,6 +1,6 @@
 # AttributeDeobfuscator
 
-An element attribute deobfuscator for [Reddit](https://www.reddit.com). Turn the original attribute names into the obfuscated/randomized ones and vice versa.
+An element attribute deobfuscator for [Reddit](https://www.reddit.com). Turn the original attribute names into the obfuscated/randomized ones and vice versa. Eases and allows creating of new Reddit modifying userscripts.
 
 ## Usage
 
