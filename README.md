@@ -67,6 +67,18 @@ window.deobfuscateAttribute = className => console.log(Deobfuscator.toNormal(cla
 
 It could look like this
 ```js
+// ==UserScript==
+// @name        name
+// @namespace   namespace
+// @match       https://www.reddit.com/*
+// @grant       none
+// @version     1.0
+// @author      author
+// @run-at      document-start
+// @description description
+// @require     https://raw.githubusercontent.com/Hakorr/AttributeDeobfuscator/main/attributedeobfuscator.js
+// ==/UserScript==
+
 const Deobfuscator = new AttributeDeobfuscator();
 Deobfuscator.ready(() => window.deobfuscateAttribute = className => console.log(Deobfuscator.toNormal(className)));
 ```
