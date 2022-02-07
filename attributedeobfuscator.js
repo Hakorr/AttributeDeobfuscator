@@ -66,26 +66,105 @@ function AttributeDeobfuscator() {
         return text;
     };
 
-    this.toObfuscated = (str, returnAsElementArray) => {
-        let result = this.attributeArr.find(val => val.name == str);
-        if(typeof result == "object") 
+    this.toQuerySelector = str => {
+        let names = str.split(" ");
+        names = names.filter(n => n);
+      
+        let querySelectorStr = "";
+        
+        for(let i = 0; i < names.length; i++)
         {
+            if (i == names.length - 1)
+                querySelectorStr += `.${names[i]}`;
+
+            else if(i == 0 || i > 0)
+                querySelectorStr += `.${names[i]}, `;
+        }
+      
+        return querySelectorStr;
+    };
+  
+    this.obfuscateClass = (str, returnAsElementArray) => {
+        if(str.includes(" "))
+        {
+            let words = str.split(" ");
+            let obfuscatedStr = "";
+          
+            for(let i = 0; i < words.length; i++)
+            {
+                if(words[i].length > 0)
+                {
+                    let result = this.attributeArr.find(val => val.name == words[i]);
+
+                    if(typeof result == "object")
+                    {
+                        if(i == words.length - 1)
+                            obfuscatedStr += result.obfuscatedName;
+                        else
+                            obfuscatedStr += result.obfuscatedName + " ";
+                    }
+                }
+            }
+
             if(returnAsElementArray)
             {
-                return document.querySelectorAll('.' + result.randomizedName);
+                return document.querySelectorAll(this.toQuerySelector(obfuscatedStr));
             }
             else
             {
-                return result.randomizedName;
+                return obfuscatedStr;
+            }
+        }
+        else
+        {
+            let result = this.attributeArr.find(val => val.name == str);
+          
+            if(typeof result == "object") 
+            {
+                if(returnAsElementArray)
+                {
+                    return document.querySelectorAll('.' + result.obfuscatedName);
+                }
+                else
+                {
+                    return result.obfuscatedName;
+                }
             }
         }
     };
 
-    this.toNormal = str => {
-        let result = this.attributeArr.find(val => val.randomizedName == str)
-        if(typeof result == "object")
+    this.deobfuscateClass = str => {
+        if(str.includes(" "))
         {
-            return result.name;
+            let words = str.split(" ");
+            let normalStr = "";
+          
+            for(let i = 0; i < words.length; i++)
+            {
+                if(words[i].length > 0)
+                {
+                    let result = this.attributeArr.find(val => val.obfuscatedName == words[i]);
+
+                    if(typeof result == "object")
+                    {
+                        if(i == words.length - 1)
+                            normalStr += result.name;
+                        else
+                            normalStr += result.name + " ";
+                    }
+                }
+            }
+          
+            return normalStr;
+        }
+        else
+        {
+            let result = this.attributeArr.find(val => val.obfuscatedName == str);
+          
+            if(typeof result == "object")
+            {
+                return result.name;
+            }
         }
     };
 
@@ -126,13 +205,13 @@ function AttributeDeobfuscator() {
                                 {
                                     let value = Object.entries(parsed)[i];
                                     let regularName = value[0];
-                                    let randomizedName = value[1];
+                                    let obfuscatedName = value[1];
                                     let combinedObj = { 
                                     "name": regularName,
-                                    "randomizedName": randomizedName
+                                    "obfuscatedName": obfuscatedName
                                     };
 
-                                    if(!this.attributeArr.some(val => val.randomizedName == combinedObj.randomizedName)) //if doesn't already exist
+                                    if(!this.attributeArr.some(val => val.obfuscatedName == combinedObj.obfuscatedName)) //if doesn't already exist
                                     {
                                         this.attributeArr.push(combinedObj); //add the obj to the array
                                     }
@@ -149,9 +228,21 @@ function AttributeDeobfuscator() {
         }
     }
 
-    window.addEventListener("load", () => callback());
+    window.addEventListener("load", () => {
+        const checkURLHashChange = setInterval (function () {
+            if (this.lastPathStr !== location.pathname) 
+            {
+                this.lastPathStr = location.pathname;
+
+                callback();
+
+            }
+        }, 100);
+      
+        callback();
+    });
 
     this.ready = __callback => {
-        callback = __callback; 
+        callback = __callback;
     };
 }
