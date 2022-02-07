@@ -66,9 +66,14 @@ function yourFunction() {
 
 ## How to find attribute names
 
-Add this to your function which is called when the deobfuscator is ready
+Add this-
 ```js
-window.deobfuscateAttribute = className => console.log(Deobfuscator.toNormal(className))
+window.deobfuscateAttribute = className => console.log(Deobfuscator.toNormal(className));
+```
+
+or this to your function which is called when the deobfuscator is ready
+```js
+console.log(Deobfuscator.attributeArr);
 ```
 
 It could look like this
@@ -89,10 +94,12 @@ const Deobfuscator = new AttributeDeobfuscator();
 Deobfuscator.ready(() => window.deobfuscateAttribute = className => console.log(Deobfuscator.toNormal(className)));
 ```
 
-Then, from the devtools' console run the command
+Then if you chose the first one, from the devtools' console run the command
 ```js
 deobfuscateAttribute("obfuscatedClassname")
 ```
+
+Otherwise, with the second one, just look at the logged array and find the values manually
 
 With the unobfuscated className, you can access the element from your script, like so
 ```js
