@@ -27,37 +27,13 @@ Deobfuscator.ready(yourFunction);
 4) Use `obfuscateClass` and `deobfuscateClass` functions accordingly
 ```js
 //Returns the element's obfuscated/randomized className
-Deobfuscator.obfuscateClass("Input", false); //zgT5MfUrDMC54cpiCpZFu
+Deobfuscator.obfuscateClass("Input", false); // "zgT5MfUrDMC54cpiCpZFu"
 
 //Returns the results of a querySelectorAll
-Deobfuscator.obfuscateClass("Input", true); //Array of [Element Object]
+Deobfuscator.obfuscateClass("Input", true); // Array of [Element Object]
 
 //Returns the normal className
-Deobfuscator.deobfuscateClass("zgT5MfUrDMC54cpiCpZFu") //Input
-```
-
-The final result could look like this
-```js
-// ==UserScript==
-// @name        name
-// @namespace   namespace
-// @match       https://www.reddit.com/*
-// @grant       none
-// @version     1.0
-// @author      author
-// @run-at      document-start
-// @description description
-// @require     https://raw.githubusercontent.com/Hakorr/AttributeDeobfuscator/main/attributedeobfuscator.js
-// ==/UserScript==
-
-const Deobfuscator = new AttributeDeobfuscator();
-Deobfuscator.ready(yourFunction);
-
-function yourFunction() {
-    const inputElements = Deobfuscator.obfuscateClass("Input", true);
-    inputElements[0].placeholder = "Hack the world";
-    inputElements[0].style.border = "1px solid #ff0000";
-}
+Deobfuscator.deobfuscateClass("zgT5MfUrDMC54cpiCpZFu") // "Input"
 ```
 
 ## How to find attribute names
@@ -71,32 +47,14 @@ window.deobfuscateAttribute = className => console.log(Deobfuscator.deobfuscateC
 console.log(Deobfuscator.attributeArr);
 ```
 
-It could look like this
-```js
-// ==UserScript==
-// @name        name
-// @namespace   namespace
-// @match       https://www.reddit.com/*
-// @grant       none
-// @version     1.0
-// @author      author
-// @run-at      document-start
-// @description description
-// @require     https://raw.githubusercontent.com/Hakorr/AttributeDeobfuscator/main/attributedeobfuscator.js
-// ==/UserScript==
-
-const Deobfuscator = new AttributeDeobfuscator();
-Deobfuscator.ready(() => window.deobfuscateAttribute = className => console.log(Deobfuscator.deobfuscateClass(className)));
-```
-
 2) If you chose the first one, run the command from the devtools, otherwise just look at the logged array manually
 ```js
-deobfuscateAttribute("obfuscatedClassname");
+deobfuscateAttribute("obfuscatedClassname"); // "deobfuscatedClassName"
 ```
 
 3) With the unobfuscated className, you can access the element from your script, like so
 ```js
-Deobfuscator.obfuscateClass("unobfuscatedClassName", true);
+Deobfuscator.obfuscateClass("deobfuscatedClassName", true); // [Element]
 ```
 
 This way you can create userscripts that won't rely on changing obfuscated values.
