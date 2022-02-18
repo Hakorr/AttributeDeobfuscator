@@ -2,7 +2,7 @@
 
 /*
  * attributedeobfuscator.js
- * v1.0.0
+ * v1.0.1
  * https://github.com/Hakorr/AttributeDeobfuscator
  * Apache 2.0 licensed
  */
@@ -10,166 +10,130 @@
 function AttributeDeobfuscator() {
     "use strict";
 
-    this.attributeArr = [];
-    let scriptURLs = [];
-    let callback = () => console.log("No callback was set");
-    
-    const rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
-    const BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
+    (() => {
+        const rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
+        const BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
 
-    const observerCallback = mutationsList => {
-        for (let mutationRecord of mutationsList) {
-            for (let node of mutationRecord.addedNodes) {
-                if (node.tagName !== 'SCRIPT') continue;
+        const observerCallback = mutationsList => {
+            for (let mutationRecord of mutationsList) {
+                for (let node of mutationRecord.addedNodes) {
+                    if (node.tagName !== 'SCRIPT') continue;
 
-                // Adds functionality to document.onbeforescriptexecute
-                if (typeof document.rndName === 'function') {
-                    document.addEventListener(
-                        rndName,
-                        document.rndName,
-                        { once: true }
-                    );
-                };
+                    // Adds functionality to document.onbeforescriptexecute
+                    if (typeof document.rndName === 'function') {
+                        document.addEventListener(
+                            rndName,
+                            document.rndName,
+                            { once: true }
+                        );
+                    };
 
-                // Returns false if preventDefault() was called
-                if (!node.dispatchEvent(BseEvent)) {
-                    node.remove();
+                    // Returns false if preventDefault() was called
+                    if (!node.dispatchEvent(BseEvent)) {
+                        node.remove();
+                    };
                 };
             };
         };
-    };
 
-    const mutObvsr = new MutationObserver(observerCallback);
-    mutObvsr.observe(document, { childList: true, subtree: true });
+        const mutObvsr = new MutationObserver(observerCallback);
+        mutObvsr.observe(document, { childList: true, subtree: true });
 
-    document.rndName = async (e) => {
-        if(e.target.src.includes(".js"))
-        {
-            if(!scriptURLs.includes(e.target.src)) //if the URL is a new one (this is to prevent the same script loading twice)
+        document.rndName = async (e) => {
+            if(e.target.src.includes(".js"))
             {
-                scriptURLs.push(e.target.src); //add the URL to an array of already processed URLs
+                if(!scriptURLs.includes(e.target.src)) // if the URL is a new one (this is to prevent the same script loading twice)
+                {
+                    scriptURLs.push(e.target.src); // add the URL to an array of already processed URLs
 
-                let resultStr = await get(e.target.src); //get http request the script
-                handleScript(resultStr); //once we have the script, handle it (extract values)
+                    let resultStr = await get(e.target.src); //get http request the script
+                    handleScript(resultStr); // once we have the script, handle it (extract values)
+                }
             }
         }
-    }
+    })();
+  
+    this.attributeArr = [];
+    let scriptURLs = [];
+    let callback = () => console.log("No callback was set");
 
     const get = async url => {
         let response = await fetch(url);
 
-        if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         let text = await response.text();
         return text;
     };
 
-    this.toQuerySelector = str => {
-        let names = str.split(" ");
-        names = names.filter(n => n);
+    this.toQuerySelector = (str, prefix) =>
+        str.split(" ")                       // split into string array
+        .filter(n => n)                      // remove empty strings
+        .map(x => `${(prefix || '.') + x},`) // apply prefix and suffix (default to '.')
+        .join(" ")                           // array into string
+        .slice(0, -1);                       // remove last char (',')
+  
+    const handleMultipleClassNames = (classNames, obfuscate) => {
+        let obfuscatedStr = "";
       
-        let querySelectorStr = "";
-        
-        for(let i = 0; i < names.length; i++)
-        {
-            if (i == names.length - 1)
-                querySelectorStr += `.${names[i]}`;
+        const one = obfuscate ? 'deobfuscatedName' : 'obfuscatedName';
+        const two = obfuscate ? 'obfuscatedName' : 'deobfuscatedName';
+      
+        classNames.forEach((name, index) => {
+            if(name.length > 0)
+            {
+                let result = this.attributeArr.find(val => val[one] == name);
 
-            else if(i == 0 || i > 0)
-                querySelectorStr += `.${names[i]}, `;
-        }
+                if(typeof result == "object")
+                {
+                    obfuscatedStr += result[two] + (index == classNames.length - 1 ? '' : ' ');
+                }
+            }
+        });
       
-        return querySelectorStr;
+        return obfuscatedStr;
     };
   
     this.obfuscateClass = (str, returnAsElementArray) => {
-        if(str.includes(" "))
+        if(str.includes(" ")) // given string includes multiple words
         {
-            let words = str.split(" ");
-            let obfuscatedStr = "";
-          
-            for(let i = 0; i < words.length; i++)
-            {
-                if(words[i].length > 0)
-                {
-                    let result = this.attributeArr.find(val => val.name == words[i]);
+            let obfuscatedStr = handleMultipleClassNames(str.split(" "), true);
 
-                    if(typeof result == "object")
-                    {
-                        if(i == words.length - 1)
-                            obfuscatedStr += result.obfuscatedName;
-                        else
-                            obfuscatedStr += result.obfuscatedName + " ";
-                    }
-                }
-            }
-
-            if(returnAsElementArray)
-            {
-                return document.querySelectorAll(this.toQuerySelector(obfuscatedStr));
-            }
-            else
-            {
-                return obfuscatedStr;
-            }
+            return (returnAsElementArray 
+                    ? document.querySelectorAll(this.toQuerySelector(obfuscatedStr, '.')) 
+                    : obfuscatedStr);
         }
-        else
+        else // given str only has one word
         {
-            let result = this.attributeArr.find(val => val.name == str);
+            let result = this.attributeArr.find(val => val.deobfuscatedName == str);
           
             if(typeof result == "object") 
             {
-                if(returnAsElementArray)
-                {
-                    return document.querySelectorAll('.' + result.obfuscatedName);
-                }
-                else
-                {
-                    return result.obfuscatedName;
-                }
+                return (returnAsElementArray
+                        ? document.querySelectorAll('.' + result.obfuscatedName)
+                        : result.obfuscatedName);
             }
         }
     };
 
     this.deobfuscateClass = str => {
-        if(str.includes(" "))
+        if(str.includes(" ")) // given string includes multiple words
         {
-            let words = str.split(" ");
-            let normalStr = "";
-          
-            for(let i = 0; i < words.length; i++)
-            {
-                if(words[i].length > 0)
-                {
-                    let result = this.attributeArr.find(val => val.obfuscatedName == words[i]);
-
-                    if(typeof result == "object")
-                    {
-                        if(i == words.length - 1)
-                            normalStr += result.name;
-                        else
-                            normalStr += result.name + " ";
-                    }
-                }
-            }
-          
-            return normalStr;
+            return handleMultipleClassNames(str.split(" "), false);
         }
-        else
+        else // given str only has one word
         {
             let result = this.attributeArr.find(val => val.obfuscatedName == str);
           
             if(typeof result == "object")
             {
-                return result.name;
+                return result.deobfuscatedName;
             }
         }
     };
 
     const handleScript = str => {
-        //This could be done with a fancy Regex search, but I don't have a sufficent Regex knowledge to make to fast enough.
+        // Could be done with a fancy Regex search, but I don't have a sufficent Regex knowledge to make to fast enough
 
         if(str.includes("sourceMapping"))
         {
@@ -180,20 +144,20 @@ function AttributeDeobfuscator() {
                 {
                     x = x.match(new RegExp(`e.exports={` + "(.*)" + `}`)); //match in the middle of two strings
 
-                    if(x && x.length > 1) //more than two results
+                    if(x && x.length > 1) // more than two results
                     { 
-                        x = x[1]; //take the second result
+                        x = x[1]; // take the second result
 
-                        x = x.replaceAll(' ',''); //clear spaces
-                        x = x.replaceAll('\n',''); //clear newlines
+                        x = x.replaceAll(' ',''); // clear spaces
+                        x = x.replaceAll('\n',''); // clear newlines
 
                         // A scuffed way to add quotation marks around the key values to make the string a valid JSON string
                         // {name:"key"} -> {"name":"key"}
-                        x = `{${x}}`; //place curly brackets around the string
-                        x = x.replaceAll('{','{"'); //add a quotation mark to the right side of every right-facing curly bracket
-                        x = x.replaceAll(',',',"'); //add a comma to the left side of every quotation mark
-                        x = x.replaceAll(':','":'); //add a quotation mark to the left side of every colon
-                        x = x.replaceAll('""','"'); //replace double quotation marks with a single one
+                        x = `{${x}}`; // place curly brackets around the string
+                        x = x.replaceAll('{','{"'); // add a quotation mark to the right side of every right-facing curly bracket
+                        x = x.replaceAll(',',',"'); // add a comma to the left side of every quotation mark
+                        x = x.replaceAll(':','":'); // add a quotation mark to the left side of every colon
+                        x = x.replaceAll('""','"'); // replace double quotation marks with a single one
 
                         try 
                         {
@@ -204,16 +168,16 @@ function AttributeDeobfuscator() {
                                 for(let i = 0; i < Object.keys(parsed).length; i++)
                                 {
                                     let value = Object.entries(parsed)[i];
-                                    let regularName = value[0];
+                                    let deobfuscatedName = value[0];
                                     let obfuscatedName = value[1];
                                     let combinedObj = { 
-                                    "name": regularName,
-                                    "obfuscatedName": obfuscatedName
+                                        "deobfuscatedName": deobfuscatedName,
+                                        "obfuscatedName": obfuscatedName
                                     };
 
-                                    if(!this.attributeArr.some(val => val.obfuscatedName == combinedObj.obfuscatedName)) //if doesn't already exist
+                                    if(!this.attributeArr.some(val => val.obfuscatedName == combinedObj.obfuscatedName)) // if the object doesn't already exist
                                     {
-                                        this.attributeArr.push(combinedObj); //add the obj to the array
+                                        this.attributeArr.push(combinedObj);
                                     }
                                 }
                             }
@@ -235,11 +199,8 @@ function AttributeDeobfuscator() {
                 this.lastPathStr = location.pathname;
 
                 callback();
-
             }
         }, 100);
-      
-        callback();
     });
 
     this.ready = __callback => {
