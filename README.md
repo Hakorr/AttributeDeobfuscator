@@ -2,11 +2,7 @@
 
 An element attribute deobfuscator for [Reddit](https://www.reddit.com). Turn the original attribute names into the obfuscated/randomized ones and vice versa. Eases and allows creating of new Reddit modifying userscripts.
 
-## Todo
-
-* Speed up the load time
-
-## Usage
+## 📋 Usage
 
 1) Copy & paste AttributeDeobfuscator to your userscript, or require it
 ```js
@@ -26,23 +22,25 @@ Deobfuscator.ready(yourFunction);
 
 4) Use `obfuscateClass` and `deobfuscateClass` functions accordingly
 ```js
-//Returns the element's obfuscated/randomized className
+// Returns the element's obfuscated/randomized className
 Deobfuscator.obfuscateClass("Input", false); // "zgT5MfUrDMC54cpiCpZFu"
 
-//Returns the results of a querySelectorAll
+// Returns the results of a querySelectorAll
 Deobfuscator.obfuscateClass("Input", true); // Array of [Element Object]
 
-//Returns the normal className
+// Returns the normal className
 Deobfuscator.deobfuscateClass("zgT5MfUrDMC54cpiCpZFu") // "Input"
 ```
 
-## How to find attribute names
+⚠️ Use the Deobfuscator's functions only inside your ready function, or after the ready function has been called.
+
+## 🔎 How to find attribute names
 
 1) Add this this to your function which is called when the deobfuscator is ready
 ```js
 window.deobfuscateAttribute = className => console.log(Deobfuscator.deobfuscateClass(className));
 
-//or
+// or
 
 console.log(Deobfuscator.attributeArr);
 ```
@@ -52,14 +50,14 @@ console.log(Deobfuscator.attributeArr);
 deobfuscateAttribute("obfuscatedClassname"); // "deobfuscatedClassName"
 ```
 
-3) With the unobfuscated className, you can access the element from your script, like so
+3) With the *deobfuscated class name*, you can access the element from your script, like so
 ```js
 Deobfuscator.obfuscateClass("deobfuscatedClassName", true); // [Element]
 ```
 
-This way you can create userscripts that won't rely on changing obfuscated values.
+**This way you can create userscripts that won't rely on changing obfuscated values!**
 
-## Example userscripts
+## 💠Example userscripts
 
 Change the background to an image
 ```js
@@ -88,3 +86,7 @@ Deobfuscator.ready(() => {
     layer[0].style["background-positio"] = '0% 50%';
 });
 ```
+
+## 🚧 Todo
+
+* Speed up the load time
