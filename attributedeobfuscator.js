@@ -67,11 +67,14 @@ function AttributeDeobfuscator() {
     };
 
     this.toQuerySelector = (str, prefix) =>
-        str.split(" ")                       // split into string array
-        .filter(n => n)                      // remove empty strings
-        .map(x => `${(prefix || '.') + x},`) // apply prefix and suffix (default to '.')
-        .join(" ")                           // array into string
-        .slice(0, -1);                       // remove last char (',')
+        str != (undefined || null)
+            ?   str.split(" ")                       // split into string array
+                .filter(n => n)                      // remove empty strings
+                .map(x => `${(prefix || '.') + x},`) // apply prefix and suffix (default to '.')
+                .join(" ")                           // array into string
+                .slice(0, -1)                        // remove last char (',')
+
+            :   ''; // the string was undefined or null
   
     const handleMultipleClassNames = (classNames, obfuscate) => {
         let obfuscatedStr = "";
