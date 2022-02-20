@@ -74,7 +74,7 @@ function AttributeDeobfuscator() {
                 .join(" ")                           // array into string
                 .slice(0, -1)                        // remove last char (',')
 
-            :   ''; // the string was undefined or null
+            :   undefined;                           // the string was undefined or null
   
     const handleMultipleClassNames = (classNames, obfuscate) => {
         let obfuscatedStr = "";
