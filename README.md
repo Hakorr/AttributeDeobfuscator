@@ -38,7 +38,7 @@ Deobfuscator.deobfuscateClass("zgT5MfUrDMC54cpiCpZFu") // "Input"
 
 1) Add this this to your function which is called when the deobfuscator is ready
 ```js
-window.deobfuscateAttribute = className => console.log(Deobfuscator.deobfuscateClass(className));
+unsafeWindow.deobfuscate = className => console.log(Deobfuscator.deobfuscateClass(className));
 
 // or
 
@@ -47,7 +47,7 @@ console.log(Deobfuscator.attributeArr);
 
 2) If you chose the first one, run the command from the devtools, otherwise just look at the logged array manually
 ```js
-deobfuscateAttribute("obfuscatedClassname"); // "deobfuscatedClassName"
+deobfuscate("obfuscatedClassname"); // "deobfuscatedClassName"
 ```
 
 3) With the *deobfuscated class name*, you can access the element from your script, like so
