@@ -11,7 +11,7 @@ function AttributeDeobfuscator() {
     "use strict";
 
     (async () => {
-        const observerCallback = mutationsList => {
+        const observerCallback = async mutationsList => {
             for (let mutationRecord of mutationsList) {
                 for (let node of mutationRecord.addedNodes) {
                     if (node.tagName !== 'SCRIPT') continue;
