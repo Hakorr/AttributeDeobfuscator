@@ -2,7 +2,7 @@
 
 /*
  * attributedeobfuscator.js
- * v1.0.1
+ * v1.0.2
  * https://github.com/Hakorr/AttributeDeobfuscator
  * Apache 2.0 licensed
  */
@@ -11,46 +11,30 @@ function AttributeDeobfuscator() {
     "use strict";
 
     (() => {
-        const rndName = Math.random().toString(36).substring(2, Math.floor(Math.random() * 40) + 5);
-        const BseEvent = new Event(rndName, { bubbles: true, cancelable: true });
-
         const observerCallback = mutationsList => {
             for (let mutationRecord of mutationsList) {
                 for (let node of mutationRecord.addedNodes) {
                     if (node.tagName !== 'SCRIPT') continue;
 
-                    // Adds functionality to document.onbeforescriptexecute
-                    if (typeof document.rndName === 'function') {
-                        document.addEventListener(
-                            rndName,
-                            document.rndName,
-                            { once: true }
-                        );
-                    };
+                    if(node.src.includes(".js"))
+                    {
+                        if(!scriptURLs.includes(node.src)) // if the URL is a new one (this is to prevent the same script loading twice)
+                        {
+                            scriptURLs.push(node.src); // add the URL to an array of already processed URLs
+        
+                            let resultStr = await get(node.src); //get http request the script
 
-                    // Returns false if preventDefault() was called
-                    if (!node.dispatchEvent(BseEvent)) {
-                        node.remove();
-                    };
+                            if(typeof resultStr == "string") {
+                                handleScript(resultStr); // once we have the script, handle it (extract values)
+                            }
+                        }
+                    }
                 };
             };
         };
 
         const mutObvsr = new MutationObserver(observerCallback);
         mutObvsr.observe(document, { childList: true, subtree: true });
-
-        document.rndName = async (e) => {
-            if(e.target.src.includes(".js"))
-            {
-                if(!scriptURLs.includes(e.target.src)) // if the URL is a new one (this is to prevent the same script loading twice)
-                {
-                    scriptURLs.push(e.target.src); // add the URL to an array of already processed URLs
-
-                    let resultStr = await get(e.target.src); //get http request the script
-                    handleScript(resultStr); // once we have the script, handle it (extract values)
-                }
-            }
-        }
     })();
   
     this.attributeArr = [];
