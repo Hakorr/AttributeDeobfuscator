@@ -10,7 +10,7 @@
 function AttributeDeobfuscator() {
     "use strict";
 
-    (() => {
+    (async () => {
         const observerCallback = mutationsList => {
             for (let mutationRecord of mutationsList) {
                 for (let node of mutationRecord.addedNodes) {
