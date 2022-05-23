@@ -87,6 +87,27 @@ Deobfuscator.ready(() => {
 });
 ```
 
+Helper script
+```js
+// ==UserScript==
+// @name        RedditDeobfuscateHelper
+// @namespace   namespace
+// @match       https://www.reddit.com/*
+// @grant       none
+// @version     1.0
+// @author      author
+// @run-at      document-start
+// @description Use the command "deobfuscate()" to deobfuscate attribute names
+// @require     https://raw.githubusercontent.com/Hakorr/AttributeDeobfuscator/main/attributedeobfuscator.js
+// ==/UserScript==
+
+const Deobfuscator = new AttributeDeobfuscator();
+
+Deobfuscator.ready(() => {
+    unsafeWindow.deobfuscate = className => console.log(Deobfuscator.deobfuscateClass(className));
+});
+```
+
 ## 🚧 Todo
 
 * Speed up the load time
